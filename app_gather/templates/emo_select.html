@@ -1,0 +1,190 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block link %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" media="screen" type="text/css"/>
+{% endblock %}
+
+{% block style %}
+    <style>
+        body {  
+            font-family: Arial, sans-serif;  
+            background-color: #f0f0f0;  
+            padding: 0;  
+        } 
+
+        h1 {  
+            color: black;  
+            text-align: center;  
+        } 
+
+        .btn {  
+            display: block;  
+            width: calc(9/10 * 100%);
+            padding: 15px;  
+            font-size: 18px;  
+            color: #fff;  
+            background-color: #007bff;  
+            border: none;  
+            border-radius: 5px;  
+            cursor: pointer;  
+        }  
+
+        .btn:hover {  
+            background-color: #2d90f9;  
+        }  
+
+        .game-container {
+            margin-bottom: 100px;
+        }
+
+        .game-info {
+            padding: 20px;
+        }
+
+        .game-image {
+            max-width: 100%;
+            height: auto;
+        }
+        .game-image-emo{
+            margin-left:calc(6/20* 100%);
+            max-width: 100%;
+            height: auto;
+        }
+
+        .parameter-adjustment {
+            padding: 20px;
+        }
+
+        .game-container_row {
+            width: 100%;
+        }
+
+        .col-md-5 {
+            width: 60%;
+        }
+
+        .col-md-6 {
+            width: 40%;
+        }
+
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <!-- 游戏1 -->
+        <div class="game-container_row">
+            <div class="col-md-5">
+                <div class="game-info">
+                    <h1>情景情绪触发</h1>
+                    <p style="font-size: 20px;color: #1b6d85;text-align: center;">观看给出的图片，选出你现在感受到的情绪</p>
+                </div>
+                <img src="{% static "img/pics_emotion/scene.png" %}" alt="游戏1" class="game-image">
+            </div>
+
+            <div class="col-md-6">
+                <div class="parameter-adjustment">
+                    <h1>游戏参数设置</h1>
+                    <form>
+                        <div class="form-group">
+                            <label for="parameter1">session：</label>
+                            <input type="text" class="form-control" id="parameter1" placeholder="session" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="level">游戏难度：</label>
+                            <select class="form-control" id="level">
+                                <option value="1">1</option>
+{#                                <option value="2">2</option>#}
+{#                                <option value="3">3</option>#}
+                                <!-- 其他选项 -->
+                            </select>
+                        </div>
+                        <!-- 其他参数 -->
+                        <a id="startButton_1" class="btn">进入游戏</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- 游戏2 -->
+        <div class="game-container_row">
+            <div class="col-md-5">
+                <div class="game-info">
+                    <h1>分辨情绪——面部表情</h1>
+                    <p style="font-size: 20px;color: #1b6d85;text-align: center;">选出最符合图中人所想表达的情绪</p>
+                </div>
+                <img src="{% static "img/pics_emotion/face.png" %}" alt="游戏2" class="game-image-emo">
+            </div>
+
+            <div class="col-md-6">
+                <div class="parameter-adjustment">
+                    <h1>游戏参数设置</h1>
+                    <form>
+                        <div class="form-group">
+                            <label for="parameter3">session：</label>
+                            <input type="text" class="form-control" id="parameter3" placeholder="session" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="level2">游戏难度：</label>
+                            <select class="form-control" id="level2">
+                                <option value="1">1</option>
+{#                                <option value="2">2</option>#}
+{#                                <option value="3">3</option>#}
+                                <!-- 其他选项 -->
+                            </select>
+                        </div>
+                        <!-- 其他参数 -->
+                        <a id="startButton_2" class="btn">进入游戏</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- 添加更多游戏块... -->
+    </div>
+{% endblock %}
+
+
+{% block js %}
+    <script>
+        document.getElementById('startButton_1').addEventListener('click', function () {
+            let sessionValue = document.getElementById('parameter1').value;
+            let levelValue = document.getElementById('level').value;
+
+            let numericValue = parseFloat(sessionValue);
+
+            // 检查是否为有效的数字且大于0
+            if (isNaN(numericValue) || numericValue <= 0) {
+                alert("session必须是大于0的有效数字！");
+                return false; // 阻止表单提交
+            }
+
+            // 构建URL，附带参数
+            let url = "/game/emotion/identify?type=scene&session=" + sessionValue + "&level=" + levelValue;
+
+            // 跳转到新的URL
+            window.location.href = url;
+        });
+
+        document.getElementById('startButton_2').addEventListener('click', function () {
+            let sessionValue = document.getElementById('parameter3').value;
+            let levelValue = document.getElementById('level2').value;
+
+            let numericValue = parseFloat(sessionValue);
+
+            // 检查是否为有效的数字且大于0
+            if (isNaN(numericValue) || numericValue <= 0) {
+                alert("session必须是大于0的有效数字！");
+                return false; // 阻止表单提交
+            }
+
+            // 构建URL，附带参数
+            let url = "/game/emotion/identify?type=face&session=" + sessionValue + "&level=" + levelValue;
+
+            // 跳转到新的URL
+            window.location.href = url;
+        });
+    </script>
+{% endblock %}
+

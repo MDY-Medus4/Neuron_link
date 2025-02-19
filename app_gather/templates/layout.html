@@ -1,0 +1,139 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>卒中康复系统2.0</title>
+    <link rel="stylesheet" href="{% static 'plugins/bootstrap-3.4.1/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" media="screen" type="text/css"/>
+    {% block link %}{% endblock %}
+    <style>
+        .navbar {
+            background-color:  #bccbde; 
+            color: #E3E3E3; 
+            border-radius: 0;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
+            position: relative; /* 设置为相对定位 */
+            height: 100px; /* 设定导航栏高度，可以根据实际情况调整 */
+        }
+
+        .navbar-brand {
+            font-weight: bold; /* 加粗字体 */
+            font-size: 64px; /* 增大字号 */
+            position: absolute; /* 设置为绝对定位 */
+            top: 50%; /* 将元素顶部定位在父元素中间 */
+            left: 50%; /* 将元素左侧定位在父元素中间 */
+            transform: translate(-50%, -50%); /* 使用 transform 属性将元素水平垂直居中 */
+            color: #fff;
+        }
+
+        .navbar-nav > li > a {
+            font-size: 16px; /* 增大字号 */
+            color: #fff;
+            padding: 10px 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        .navbar-nav > li > a:hover {
+            background-color: #286090;
+        }
+        
+        .navbar-logo {
+            max-height: 40px;
+            display: block;
+            position: absolute;
+            top: 50%;
+            left: 15px; /* 调整右侧间距 */
+            transform: translateY(-50%);
+        }
+
+        .navbar-right{
+            max-height: 40px;
+            display: block;
+            position: absolute;
+            top: 50%;
+            right: 15px; /* 调整右侧间距 */
+            transform: translateY(-50%);
+        }
+        /* Dropdown menu styles */
+        .dropdown-menu {
+            background-color: #337ab7;
+            border-radius: 0;
+            border: none;
+        }
+
+        .dropdown-menu > li > a {
+            color: #fff;
+            padding: 10px 20px;
+        }
+
+        .dropdown-menu > li > a:hover {
+            background-color: #286090;
+        }
+
+        iframe {
+            display: block;
+            margin: auto;
+            width: 800px;
+            height: 600px;
+
+        }
+    </style>
+    {% block style %}{% endblock %}
+
+</head>
+<body>
+<nav class="navbar navbar-default">
+    <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed ml-auto" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href ="/index/">卒中康复系统2.0</a>
+            <img src="{% static 'img/logo/logo.png' %}" alt="Logo" class="navbar-logo">
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#" id="eegConnectStart">EEG-Link</a></li>
+                <li><a href="#">神经反馈</a></li>
+                <li><a href="/index/">采集任务</a></li>
+                <li><a href="/index/login">登录</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false">{{ request.session.info.name }} <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">个人资料</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="/index/logout">患者退出</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
+
+
+{#<iframe src="https://www.4399.com"></iframe>#}
+
+
+<div>
+    {% block content %}{% endblock %}
+</div>
+
+
+<script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+<script src="{% static 'plugins/bootstrap-3.4.1/js/bootstrap.min.js' %}"></script>
+<script src={% static "js/eegConnect.js" %}></script>
+{% block js %}
+
+{% endblock %}
+    
+</body>
+</html>

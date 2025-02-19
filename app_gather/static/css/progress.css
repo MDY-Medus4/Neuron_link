@@ -1,0 +1,79 @@
+.progress {
+    margin-top: 10px;
+    width: 600px;
+    height: 20px;
+    background: #f0f0f0;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 0 auto; /* 水平居中 */
+    margin-bottom: 40px;
+}
+
+.progress-shadow {
+    width: 100%;
+    height: 100%;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    border-radius: 10px;
+    background: repeating-linear-gradient(135deg, #3498db, #3498db 10px, #85a4bd 10px, #8ca5bb 20px);
+    transition: width 0.3s ease-in-out;
+    position: relative; /* 添加相对定位 */
+}
+
+.progress-value {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    z-index: 1; /* 设置层级 */
+}
+
+.active {
+    animation: progressAnimation 2s linear infinite;
+}
+
+/*环形进度条*/
+.progress_circle {
+    padding: 20px;
+    width: 200px;
+    height: 200px;
+    background: conic-gradient(green var(--progress), #f1f1f1 0);
+    border-radius: 50%;
+    position: relative;
+}
+
+.progress_circle::before {
+    content: attr(data-progress);
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    bottom: 10px;
+    left: 10px;
+    background-color: #fff;
+    width: 180px;
+    height: 180px;
+    text-align: center;
+    line-height: 180px;
+    border-radius: 50%;
+}
+
+.right_show {
+    border: 8px dashed #666699;
+}
+
+@keyframes progressAnimation {
+    0% {
+        width: 0;
+    }
+    100% {
+        width: 100%;
+    }
+}

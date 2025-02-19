@@ -1,0 +1,12 @@
+/app_gather/static/img/*
+
+**/img/
+
+**/img.zip
+
+**/img.rar
+
+# **/raw_data/*
+
+**/__pycache__/*
+

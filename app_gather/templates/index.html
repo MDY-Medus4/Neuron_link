@@ -1,0 +1,181 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block link %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" media="screen" type="text/css"/>
+{% endblock %}
+
+{% block style %}
+    <style>
+        /* 脑电图显示框容器 */  
+        .eeg_container {  
+            display: flex;  
+            width: 100%; /* 容器占据整个页面的宽度 */  
+            height: 100vh; /* 设置为视口高度 */  
+            align-items: flex-start; /* 垂直对齐方式根据需要调整 */  
+            z-index: 1; /* 设置较低的z-index值，以确保它不会覆盖空间按钮 */
+        }  
+
+        /* 脑电图显示框 */  
+        .eeg {  
+            /*border: 4px dashed #397003; */ 
+            width: calc(13/20 * 100%); /* 宽度为容器宽度的13/20 */  
+            height: 100vh; /* 高度为整个视口的高度 */  
+            bottom:-70px; 
+            box-sizing: border-box; /* 包含边框和内边距在宽度计算中 */  
+        }
+
+        /* 游戏选择框容器样式 */  
+        .game_select {  
+            position: absolute; /* 绝对定位 */  
+            left:calc(13/20 * 100%);
+            right:0px; 
+            top:calc(5/20 * 100%);
+            bottom:0;
+            display: flex; /* 使用Flexbox布局 */  
+            flex-direction: row;
+            flex-wrap:wrap;
+            z-index: 2; /* 设置较高的z-index值，以确保它显示在eeg_container之上 */ 
+        }  
+
+        .game-list-test{
+            position: absolute; /* 绝对定位 */  
+            left:calc(13/20 * 100%);
+            right:0px;
+        }
+        /* 游戏列表标题样式 */  
+        .game-list-header {  
+            margin-left:calc(7/20 * 100%);
+        }  
+
+        .game-list-header h1{
+            font-size: 45px; /* 增大字号 */
+            font-weight: bold; /* 加粗字体 */
+        }
+
+         /* 空间按钮样式 */ 
+        .btn-thirdary{    
+            position: relative;
+            left: 5%;
+            top:5%;
+            width: 200px;
+            height: 200px; 
+        } 
+
+
+        .entry_image{
+            object-fit: cover;
+        }
+
+        /* 具体按钮图片样式 */
+        #spatial { 
+            width: 130px;
+            height: 150px;
+            position: relative;
+            top: 10%;
+        }
+
+        #emotion { 
+            width: 130px;
+            height: 150px;
+            position: relative;
+            top: 10%;
+        }
+
+        #attention {
+            width: 130px;
+            height: 130px;
+            position: relative;
+            top: 15%;
+        }
+
+        #memory {
+            width: 160px;
+            height: 80px;
+            position: relative;
+            top: 25%;
+        }
+
+        #motor {
+            width: 130px;
+            position: relative;
+            top: 15%;
+        }
+
+            
+        #composite_paradigm {
+            width: 130px;
+            position: relative;
+            top: 15%;
+        }
+
+        .eegConnect-test{
+            border: 3px dashed purple; /* 示例边框颜色，可以根据需要更改 */
+            position: absolute; /* 绝对定位 */  
+            left:calc(13/20 * 100%);
+            right:0px;
+            top:calc(1 * 100%);
+            bottom:-70px;
+        }
+
+        #eegConnectStart{
+            margin-left:calc(2/5 * 100%);
+            width: 140px;
+            height: 43px;
+        }
+
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="eeg_container">
+
+        <div class="eeg"></div>
+
+        <!-- 新增的阻抗显示框 -->
+        <!--<div class="impedance"></div>-->
+
+        <div class="game-list-test">
+            <div class="game-list-header">  
+                <h1>游戏列表</h1>  
+            </div> 
+        </div>
+
+        <div class="game_select">
+            <a id="spatial_Button" href="/game/spatial/select" class="btn btn-thirdary">
+                <img id="spatial" src="{% static 'img/logo/kjxz.png' %}" alt="空间旋转" class="entry_image">
+            </a>
+            <a id="emotion_Button" href="/game/emotion/select" class="btn btn-thirdary">
+                <img id="emotion" src="{% static 'img/logo/emotion.png' %}" alt="情绪识别" class="entry_image">
+            </a>
+            <a id="attention_Button" href="/game/attention/select" class="btn btn-thirdary">
+                <img id="attention" src="{% static 'img/logo/attention.png' %}" alt="注意力" class="entry_image">
+            </a>
+            <a id="mmemory_Button" href="/game/memory/select" class="btn btn-thirdary">
+                <img id="memory" src="{% static 'img/logo/memory.png' %}" alt="工作记忆" class="entry_image">
+            </a>
+            <a id="speech_Button" href="/game/speech/select" class="btn btn-thirdary">
+                <img id="speech" src="{% static 'img/logo/speech.png' %}" alt="语言康复">
+            </a>
+            <a id="motor_Button" href="/game/motor_imagery/setting" class="btn btn-thirdary">
+                <img id="motor" src="{% static 'img/logo/motor_imagery.png' %}" alt="运动想象">
+            </a>
+            <a id="composite_paradigm_Button" href="/game/composite_paradigm/setting" class="btn btn-thirdary">
+            </a>
+                <img id="composite_paradigm" src="{% static 'img/logo/composite_paradigm.png' %}" alt="复合言语">
+            </a>
+
+        </div>
+
+        <!-- <div class="eegConnect-test">
+            <a id="eegConnectStart" class="btn">脑电数据连接</a>
+        </div> -->
+    </div>
+
+
+{% endblock %}
+
+
+{% block js %}
+    <script src={% static "js/eegConnect.js" %}></script>
+{% endblock %}

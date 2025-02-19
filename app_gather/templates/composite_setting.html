@@ -1,0 +1,115 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block link %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" media="screen" type="text/css"/>
+{% endblock %}
+
+{% block style %}
+    <style>
+        .container {
+            margin-bottom: 100px;
+        }
+
+        .game-info {
+            padding: 20px;
+        }
+
+        .game-image {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .parameter-adjustment {
+            padding: 20px;
+        }
+
+        .game-container {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+
+        .col-md-6 {
+            width: 50%;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="game-container">
+            <div class="col-md-6">
+                <div class="game-info">
+                    <h1>言语认知任务</h1>
+                    <p style="font-size: 20px;color: #1b6d85">按照屏幕里的图片，先想象词语的发音，再读出词语</p>
+                </div>
+                <img src="{% static 'img/speech/logo/game.png' %}" alt="游戏" class="game-image">
+            </div>
+
+            <div class="col-md-6">
+                <div class="parameter-adjustment">
+                    <h1>游戏参数设置</h1>
+                    <form>
+                        <div class="form-group">
+                            <label for="session">Session：</label>
+                            <input type="text" class="form-control" id="session" placeholder="session" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="level">游戏难度：</label>
+                            <select class="form-control" id="level">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="time">每张图片的时间(秒)：</label>
+                            <input type="text" class="form-control" id="time" placeholder="时间" required>
+                        </div>
+                        <a id="startButton" class="btn">进入游戏</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        document.getElementById('startButton').addEventListener('click', function () {
+            let sessionValue = document.getElementById('session').value;
+            let levelValue = document.getElementById('level').value;
+            let timeValue = document.getElementById('time').value;
+
+            let numericSession = parseFloat(sessionValue);
+            let numericTime = parseFloat(timeValue);
+
+            // 校验Session输入
+            if (isNaN(numericSession) || numericSession <= 0) {
+                alert("Session必须是大于0的有效数字！");
+                return false;
+            }
+
+            // 校验时间输入
+            if (isNaN(numericTime) || numericTime <= 0) {
+                alert("时间必须是大于0的有效数字！");
+                return false;
+            } else if (numericTime > 15) {
+                let result = confirm("你填写的时间超过了 " + numericTime + " 秒，你确定要继续吗？");
+                if (!result) return false;
+            }
+
+            // 进入言语想象游戏
+            let speechImageryUrl = "/game/speech/imagery?session=" + sessionValue + "&level=" + levelValue + "&time=" + timeValue;
+            window.location.href = speechImageryUrl;
+
+            // 设置定时器，等待言语想象游戏完成后自动进入公开言语
+            setTimeout(function () {
+                let speechPublicUrl = "/game/speech/public?session=" + sessionValue + "&level=" + levelValue;
+                window.location.href = speechPublicUrl;
+            }, numericTime * 1000 * 10); // 假设游戏1运行时间是 time × 10 秒
+        });
+    </script>
+{% endblock %}

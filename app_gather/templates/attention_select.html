@@ -1,0 +1,282 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block link %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" media="screen" type="text/css"/>
+{% endblock %}
+
+{% block style %}
+    <style>
+        .game-container {
+            margin-bottom: 100px;
+        }
+
+        .game-info {
+            padding: 20px;
+        }
+
+        .game-image {
+            max-width: 80%;
+            height: auto;
+        }
+
+        .parameter-adjustment {
+            padding: 20px;
+        }
+
+        .game-container_row {
+            width: 100%;
+        }
+
+        .col-md-5 {
+            width: 65%;
+        }
+
+        .col-md-6 {
+            width: 35%;
+        }
+        #imageContainer {
+            border: 4px dashed #397003;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            margin-right: 150px; /* 增加右边距，使左边的图片与右边的图片距离更远 */
+            min-width: auto; /* 设置父元素的最小宽度为自动，即与子元素匹配 */
+            min-height: auto; /* 设置父元素的最小高度为自动，即与子元素匹配 */
+        }
+
+        .option {
+            width: 184px; /* 根据需要调整宽度 */
+            height: 210px; /* 根据需要调整高度 */
+            object-fit: cover; /* 保持图片比例 */
+        }
+        .optionCar {
+            width: 33%; /* 将图片的宽度设置为原始宽度的50% */
+            height: auto; /* 自动调整高度，保持原始宽高比 */
+        }
+        .option.selected {
+            border: 5px outset #f5e107;
+            padding: 0px
+        }
+        .optionCar.selected {
+            border: 5px outset #f5e107;
+            padding: 0px
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <!-- 游戏1 -->
+        <div class="game-container_row">
+            <div class="col-md-5">
+                <div class="game-info">
+                    <h1>注意力小车游戏</h1>
+                    <p style="font-size: 20px;color: #1b6d85">游戏开始时使用摇杆控制小车左右移动使小车尽可能沿着红线行驶，并吃到尽可能多的爱心！</p>
+                </div>
+                <img src="{% static "img/img_attention/game_intro.png" %}" alt="游戏jie" class="game-image">
+            </div>
+
+            <div class="col-md-6">
+                <div class="parameter-adjustment">
+                    <h1>游戏参数设置</h1>
+                    <form>
+                        <div class="form-group">
+                            <label for="parameter1">session：</label>
+                            <input type="text" class="form-control" id="parameter1" placeholder="session" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="level">游戏难度：</label>
+                            <select class="form-control" id="level">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <!-- 其他选项 -->
+                            </select>
+                        </div>
+                        <!-- 其他参数 -->
+                        <a id="startButton_1" class="btn">进入游戏</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- 选择地图 -->
+        <div class="game-container_row">
+            <div class="col-md-5">
+                <div class="game-info">
+                    <h1>选择喜欢的地图</h1>
+                    <p style="font-size: 20px;color: #1b6d85">操作摇杆选择喜欢的地图</p>
+                </div>
+                <div id="imageContainer">{# 建立容器，内部代码由js渲染 #}
+                    <img class="option" src="{% static "img/img_attention/bg_1.1.png" %}" alt="地图1" >
+                    <img class="option" src="{% static "img/img_attention/bg_1.2.png" %}" alt="地图2" >
+                    <img class="option" src="{% static "img/img_attention/bg_1.3.png" %}" alt="地图3" >
+                </div>    
+            </div>
+            <div class="col-md-6">
+                <div class="game-info">
+                <h1>选择喜欢的小车</h1>
+                    <p style="font-size: 20px;color: #1b6d85">操作摇杆选择喜欢的小车</p>
+                </div>
+                <div id="imageContainer">{# 建立容器，内部代码由js渲染 #}
+                    <img class="optionCar" src="{% static "img/img_attention/car_1.png" %}" alt="小车3" >
+                    <img class="optionCar" src="{% static "img/img_attention/car_2.png" %}" alt="小车2" >
+                    <img class="optionCar" src="{% static "img/img_attention/car_3.png" %}" alt="小车3" >
+                </div>
+            </div>
+            
+        </div>
+
+        <!-- 添加更多游戏块... -->
+    </div>
+{% endblock %}
+
+
+{% block js %}
+    <script>
+        var mapID=0;
+        var carID=0;
+        window.addEventListener('DOMContentLoaded', (event) => {
+        const imageOptions = document.querySelectorAll('.option');
+        
+        // 默认选择第一个地图
+        if (imageOptions.length > 0) {
+            imageOptions[0].classList.add('selected');
+        }
+    });
+        document.addEventListener('keydown', function(event) {
+        const imageOptions = document.querySelectorAll('.option');
+        let selectedOptionIndex = -1;
+
+        // 获取当前选中的地图
+        imageOptions.forEach(function(option, index) {
+            if (option.classList.contains('selected')) {
+                selectedOptionIndex = index;
+                mapID=index+1;
+                // alert(index);
+            }
+        });
+
+        // 根据按下的键选择不同的地图
+        switch(event.key) {
+            case 'ArrowLeft':
+                // 向左选择前一个地图
+                if (selectedOptionIndex > 0) {
+                    imageOptions[selectedOptionIndex].classList.remove('selected');
+                    imageOptions[selectedOptionIndex - 1].classList.add('selected');
+                }
+                break;
+            case 'ArrowRight':
+                // 向右选择下一个地图
+                if (selectedOptionIndex < imageOptions.length - 1) {
+                    imageOptions[selectedOptionIndex].classList.remove('selected');
+                    imageOptions[selectedOptionIndex + 1].classList.add('selected');
+                }
+                break;
+            case 'Enter':
+                // 按下回车键后选定当前选中的地图，并移除键盘事件监听器
+                event.preventDefault();
+                // 执行选定地图后的逻辑，例如跳转到其他页面或执行其他操作
+                const selectedOption = document.querySelector('.option.selected');
+                if (selectedOption) {
+                    // 执行选定地图后的逻辑，例如跳转到其他页面
+                    const selectedMapSrc = selectedOption.getAttribute('src');
+                    console.log('选定的地图：', selectedMapSrc);
+                }
+                // 移除键盘事件监听器
+                document.removeEventListener('keydown', arguments.callee);
+
+                // 将第一辆小车设置为默认选中状态
+                const carOptions = document.querySelectorAll('.optionCar');
+                if (carOptions.length > 0) {
+                    carOptions[0].classList.add('selected');
+                }
+                // 然后，添加小车选择的键盘事件监听器
+                document.addEventListener('keydown', carSelectionHandler);
+                break;
+                // 其他按键操作
+        }
+    });
+
+
+    // 定义小车选择的键盘事件处理函数
+        function carSelectionHandler(event) {
+            const carOptions = document.querySelectorAll('.optionCar');
+            let selectedCarIndex = -1;
+
+            // 获取当前选中的小车
+            carOptions.forEach(function(option, index) {
+                if (option.classList.contains('selected')) {
+                    selectedCarIndex = index;
+                    carID=index+1;
+                }
+            });
+
+            // 根据按下的键选择不同的小车
+            switch(event.key) {
+                case 'ArrowLeft':
+                    // 向左选择前一个小车
+                    if (selectedCarIndex > 0) {
+                        carOptions[selectedCarIndex].classList.remove('selected');
+                        carOptions[selectedCarIndex - 1].classList.add('selected');
+                    }
+                    break;
+                case 'ArrowRight':
+                    // 向右选择下一个小车
+                    if (selectedCarIndex < carOptions.length - 1) {
+                        carOptions[selectedCarIndex].classList.remove('selected');
+                        carOptions[selectedCarIndex + 1].classList.add('selected');
+                    }
+                    break;
+                case 'Enter':
+                    // 按下回车键后选定当前选中的小车，并移除键盘事件监听器
+                    event.preventDefault();
+                    // 执行选定小车后的逻辑
+                    const selectedCarOption = document.querySelector('.optionCar.selected');
+                    if (selectedCarOption) {
+                        // 执行选定小车后的逻辑
+                        const selectedCarSrc = selectedCarOption.getAttribute('src');
+                        console.log('选定的小车：', selectedCarSrc);
+                    }
+                    // 移除小车选择的键盘事件监听器
+                    document.removeEventListener('keydown', carSelectionHandler);
+                    break;
+                // 其他按键操作
+            }
+        }
+
+
+        document.getElementById('startButton_1').addEventListener('click', function () {
+            let sessionValue = document.getElementById('parameter1').value;
+            let levelValue = document.getElementById('level').value;
+
+            let numericValue = parseFloat(sessionValue);
+
+            // 检查是否为有效的数字且大于0
+            if (isNaN(numericValue) || numericValue <= 0) {
+                alert("session必须是大于0的有效数字！");
+                return false; // 阻止表单提交
+            }
+
+            if(carID==0||mapID==0)
+            {
+                alert("请先选择地图或者小车！");
+                return false; // 阻止表单提交
+            }
+            // alert(carID);
+            // 构建URL，附带参数
+            let url = "/game/attention/game?" + 
+                    "session=" + sessionValue + 
+                    "&level=" + levelValue + 
+                    "&map=" + mapID + 
+                    "&car=" + carID;
+            // 跳转到新的URL
+            window.location.href = url;
+        });
+
+
+    </script>
+{% endblock %}
+

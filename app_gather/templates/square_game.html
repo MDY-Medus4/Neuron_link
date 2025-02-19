@@ -1,0 +1,198 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block link %}
+    <script>
+        const exp = "spatial_rotate_square";
+        let session = {{session}};
+        let name = "{{ request.session.info.name }}";
+    </script>
+    <link rel="stylesheet" href="{% static 'css/progress.css' %}">
+    {#    <link rel="stylesheet" type='text/css' href="'http://fonts.googleapis.com/css?family=Ubuntu:500,500italic'">#}
+    {#    <link rel="stylesheet" href="{% static 'css/normalize.css' %}">#}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" media="screen" type="text/css"/>
+{% endblock %}
+
+{% block style %}
+    <style>
+        .game-container {
+            display: flex;
+            justify-content: center;
+            align-items: start;
+            gap: 100px; /* 控制图片容器和选项容器之间的间距 */
+            margin-bottom: 60px;
+        {#height: 100vh; /* 设置容器高度为视窗的高度，可根据需要调整 */#}
+        }
+
+        #imageContainer {
+            border: 4px dashed #397003;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            margin-right: 150px; /* 增加右边距，使左边的图片与右边的图片距离更远 */
+        }
+
+        #leftImage {
+            width: 600px; /* 根据需要调整宽度 */
+            height: 600px; /* 根据需要调整高度 */
+            object-fit: cover; /* 保持图片比例 */
+        }
+
+        .option {
+            width: 250px; /* 根据需要调整宽度 */
+            height: 250px; /* 根据需要调整高度 */
+            object-fit: cover; /* 保持图片比例 */
+        }
+
+        #optionsContainer {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px; /* 选项之间的间隔 */
+        }
+
+        .option.selected {
+            border: 5px outset #f5e107;
+            padding: 3px
+        }
+
+        {#标题字体样式#}
+        .neonContainer {
+            display: flex;
+            justify-content: center;
+        }
+
+        .rightContainer {
+            display: flex;
+            justify-content: flex-start; /* Align items to the start of the container */
+            margin-left: 20%; /* Assuming the parent container's width is 100% */
+        {#display: grid;#} grid-template-columns: auto auto; /* 两列，自动宽度 */
+            gap: 50px; /* 设置合适的间距 */
+            align-items: center; /* 垂直居中对齐 */
+        }
+
+        @-webkit-keyframes shining {
+            from {
+                text-shadow: 0 0 10px #9ddcef, 0 0 20px #8fd1e3, 0 0 30px #6ac1e7, 0 0 40px #43ace1, 0 0 50px skyblue, 0 0 60px skyblue;
+            }
+            to {
+                text-shadow: 0 0 5px lightblue, 0 0 10px lightblue, 0 0 15px lightblue, 0 0 20px skyblue, 0 0 25px skyblue, 0 0 30px skyblue;
+            }
+        }
+
+        .neon {
+            color: #087cc5;
+            font-size: 2.5rem;
+            -webkit-animation: shining 0.5s alternate infinite;
+            animation: shining 0.5s alternate infinite;
+            text-align: center; /* 水平居中文本 */
+            margin-bottom: 5rem;
+            font-family: '幼圆', serif;
+        }
+
+        {#反馈图片#}
+        #rImage, #lImage {
+            width: 100px; /* 根据需要调整宽度 */
+            height: 100px; /* 根据需要调整高度 */
+            object-fit: cover; /* 保持图片比例 */
+        }
+
+        {#反馈图片特效#}
+        .feedback_pic {
+            display: flex;
+            align-items: center;
+            margin-left: 100px;
+        }
+
+        .feedback_pic h1,
+        .feedback_pic .pic {
+            margin: 0; /* 去除标题和图片的默认边距 */
+        }
+
+        .pic {
+            display: flex;
+            border: 4px dashed #000000;
+            width: 250px; /* 设置容器宽度，根据需要调整 */
+            height: 250px; /* 设置容器高度，根据需要调整 */
+        }
+
+        /* 如果希望其中的图片也按照容器大小显示，可以设置图片的最大宽度和最大高度 */
+        #rImage,
+        #lImage {
+            width: 230px; /* 设置图片宽度，根据需要调整 */
+            height: 230px; /* 设置图片高度，根据需要调整 */
+        }
+
+
+        {#按钮样式#}
+        .t_button {
+            position: fixed;
+            right: 10%;
+            /* 其他样式，例如背景色、内边距等 */
+        }
+
+    </style>
+{% endblock %}
+
+
+
+{% block content %}
+    <div class="neonContainer">
+        {#        <span class="neon">找到匹配的图片</span>#}
+        <h1>找到匹配的图片</h1>
+    </div>
+
+    {#进度条#}
+    {#    // 外边框#}
+    <div class="progress">
+        {#    // 内边框#}
+        <div class="progress-shadow">
+            <div id="bar" class="progress-bar progress-bar-striped active" style="width: 0%;">
+                <div class="progress-value">0%</div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="game-container">
+        <div id="imageContainer">{# 建立容器，内部代码由js渲染 #}
+            {#            <img src="{{ image_data.0.pic }}" alt="左边的图片" id="leftImage">#}
+        </div>
+        <div id="optionsContainer">{# 建立容器，内部代码由js渲染 #}
+            {#                        <img class="option" src="{% static 'img/colorful_processed/drawing_1.png' %}" alt="测试1" data-index=0 id="121">#}
+            {#            <img class="option" src="{% static 'img/3.png' %}" alt="备选2" data-index=1 id="0">#}
+            {#            <img class="option" src="{% static 'img/3.png' %}" alt="备选3" data-index=2 id="0">#}
+            {#            <img class="option" src="{% static 'img/3.png' %}" alt="备选4" data-index=3 id="0">#}
+        </div>
+    </div>
+
+    <div class="rightContainer">
+        {#        <span class="neon">正确率:</span>#}
+        <h1>正确率：</h1>
+        <div id="circle_bar" class="progress_circle" style="--progress: 100%; --last: 0%;"
+             data-progress="100%"></div>
+        <div class="feedback_pic">
+            <h1>回答结果：</h1>
+            <div class="pic">
+                <img id="rImage" src="{% static 'img/hint/right.png' %}" alt="太棒了，回答正确" style="display: none;">
+            </div>
+        </div>
+        <div class="t_button">
+            <a id="startListeningButton" class="btn" href="javascript:void(0)">暂停</a>
+            <a id="restartButton" href="/game/spatial/select" class="btn btn-secondary">重新开始</a>
+            <a id="endButton" class="btn">结束</a>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block js %}
+    <script>
+        const mergedData = {{ mergedData|safe }}
+        const level = {{ level }}
+        const exp_name = "spatial_rotate_square"
+    </script>
+    <script type="module" src="{% static '/js/match_game_square.js' %}"></script>
+{% endblock %}

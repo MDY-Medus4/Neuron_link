@@ -1,0 +1,102 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" media="screen" type="text/css"/>
+    <style type="text/css">
+        #background {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center; /* 水平居中 */
+            align-items: center; /* 垂直居中 */
+            height: 100vh; /* 父div的高度 */
+            flex-wrap: wrap;
+            }
+        #battleground {
+            width: 1300px;
+            height: 100vh; /* 将高度设置为浏览器窗口的高度 */
+            /* background: url("{% static 'img/img_attention/bg_1.1.png' %}") repeat-y; 修正背景图片的路径 */
+            align-items: center;
+            background-position: 0 0;
+            position: relative; /* 修改为 relative，使小车相对于 battleground 定位 */
+            z-index: 1;
+            overflow: hidden;
+            display: inline-block; /* 设置为行内块元素 */
+            text-align: center; /* 水平居中对齐 */
+            background-size: cover;
+        }
+        #car {
+            position: absolute;
+            bottom: 0; /* 控制小车在底部 */
+            left: 50%; /* 控制小车水平居中 */
+            /* transform: translateX(-50%); 控制小车水平居中 */
+            width: 80px; /* 设置小车宽度 */
+            height: auto; /* 自动调整高度，保持原始宽高比 */
+        }
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%; /* 宽度设置为父元素宽度 */
+            height: 100%; /* 高度设置为父元素高度 */
+        }
+        .btn {
+            cursor: pointer;
+            /* margin-left: 20px; 调整按钮与 battleground 之间的间距 */
+            /* margin-top: 20px; 调整按钮与上方元素之间的间距 */
+            display: block;
+        }
+        .custom-div {
+            width: 200px; /* 设置宽度为 200 像素 */
+            height: 100vh; /* 设置高度为 100 像素 */
+            background-color: lightblue; /* 设置背景颜色为浅蓝色 */
+        }
+        body {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <div id="background">
+        <div class="custom-div">
+
+        </div>
+        <div id="battleground">
+            <canvas id="myCanvas"></canvas>
+            <!-- 小车图片 -->
+            <img id="car" src="{% static 'img/img_attention/car_1.png' %}" alt="Car"> <!-- 修正图片路径 -->
+        </div>
+        <div class="custom-div">
+            <div>
+                <h1 id="atd">注意力偏差：0</h1>
+            </div>
+            <div>
+                <h1 id="cod">漏检金币数：0</h1>
+            </div>
+            <a id="controlButton" class="btn">开始游戏</a>
+            <br>
+            <a id="Restart" href="/game/attention/select" class="btn">重新开始</a>
+            <br>
+            <a id="Over" class="btn">结束游戏</a>
+        </div>
+    </div>
+    <script>
+        var session = "{{ session }}";
+        var level = "{{ level }}";
+        var map_id = "{{ map }}";
+        var car_id = "{{ car }}";
+        var name = "{{ request.session.info.name }}";
+
+    </script>
+    <script src="{% static 'js/attention.js' %}" type="text/javascript" charset="utf-8"></script>
+</body>
+</html>
+{% endblock %}

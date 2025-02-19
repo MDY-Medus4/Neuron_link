@@ -1,0 +1,140 @@
+    {% extends 'layout.html' %}
+    {% load static %}
+
+    {% block link %}
+        <script>
+            const exp = "memory_road";
+            // const exp = "spatial_rotate_square";
+            let session = {{session}};
+            let name = "{{ request.session.info.name }}";
+            // alert(session);
+        </script>
+        <link rel="stylesheet" href="{% static 'css/progress.css' %}">
+        {#    <link rel="stylesheet" type='text/css' href="'http://fonts.googleapis.com/css?family=Ubuntu:500,500italic'">#}
+        {#    <link rel="stylesheet" href="{% static 'css/normalize.css' %}">#}
+        <link rel="stylesheet" href="{% static 'css/style.css' %}" media="screen" type="text/css"/>
+    {% endblock %}
+
+
+    {% block style %}
+    <style>
+        .total{
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column; /* 设置flex布局的方向为垂直 */
+            justify-content: center;
+            align-items: center;
+        }
+        .grid-container {
+            display: grid;
+            position: relative; /* 添加的属性 */
+            grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+            grid-template-rows: repeat(auto-fill, 50px);
+            gap: 0px; /* 根据需要调整间隙 */
+        }
+        
+        .grid-item {
+            border: 0px solid black;  /* 为网格添加边框 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100px;
+            height: 100px;
+            position: relative; /* 新增的属性 */
+        }
+        
+        .grid-item img{
+            position: absolute; /* 新增的属性 */
+            width: 100%;  /* 将图片宽度设为网格宽度 */
+            height: 100%; /* 将图片高度设为网格高度 */
+            object-fit: cover;
+        }
+        .overlay {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 100; /* 设置z-index以确保图片在顶层 */
+        }
+        .path-arrow {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 2; /* 设置z-index以确保图片在顶层 */
+        }
+        {#标题字体样式#}
+        .neonContainer {
+            text-align: center; /* 设置标题文字水平居中 */
+            margin-bottom: 20px; /* 设置标题与格子区域之间的间距 */
+        }
+
+        .rightContainer {
+            display: flex;
+            justify-content: flex-start; /* Align items to the start of the container */
+            margin-left: 20%; /* Assuming the parent container's width is 100% */
+        {#display: grid;#} grid-template-columns: auto auto; /* 两列，自动宽度 */
+            gap: 50px; /* 设置合适的间距 */
+            align-items: center; /* 垂直居中对齐 */
+        }
+        .red-border {
+            border: 3px solid blue; /* 设置红色边框，可以根据需要调整边框的厚度 */
+        }
+    </style>
+    {% endblock %}
+
+    {% block content %}
+    <body>
+        <div class="total">
+            <div class="neonContainer">
+                <!-- {#        <span class="neon">回忆选出刚才出现的图片</span>#} -->
+                <h1>记住显示的路径，回忆并自己走一遍！</h1>
+            </div>
+            {#进度条#}
+            {#    // 外边框#}
+            <div class="progress">
+                {#    // 内边框#}
+                <div class="progress-shadow">
+                    <div id="bar" class="progress-bar progress-bar-striped active" style="width: 0%;">
+                        <div class="progress-value">0%</div>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-container" id="gridContainer"></div>
+            <!-- <div class="t_button">
+                <a id="startListeningButton" class="btn" href="javascript:void(0)">暂停</a>
+                <a id="restartButton" href="/game/memory/select" class="btn btn-secondary">重新开始</a>
+                <a id="endButton" class="btn">结束</a>
+            </div> -->
+        </div>
+        <br/><br/><br/>
+        <div class="rightContainer">
+            {#        <span class="neon">正确率:</span>#}
+            <h1>记忆准确率：</h1>
+            <div id="circle_bar" class="progress_circle" style="--progress: 100%; --last: 0%;"
+                 data-progress="100%"></div>
+            <div class="feedback_pic">
+                <div class="pic">
+                    <img id="rImage" src="{% static 'img/hint/right.png' %}" alt="太棒了，回答正确" style="display: none;">
+                </div>
+            </div>
+            <div class="t_button">
+                <a id="startListeningButton" class="btn" href="javascript:void(0)">暂停</a>
+                <a id="restartButton" href="/game/memory/select" class="btn btn-secondary">重新开始</a>
+                <a id="endButton" class="btn">结束</a>
+            </div>
+        </div>
+    </body>
+    {% endblock %}
+
+
+    {% block js %}
+    <script>
+        // const mergedData = {{ mergedData|safe }}
+        const level = {{ level }}
+        const exp_name = "memory_road"
+    </script>
+    <script type="module" src="{% static '/js/memory_road.js' %}"></script>
+
+    {% endblock %}

@@ -1,0 +1,153 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block link %}
+    <script>
+        const exp = "emotion_face";
+        let session = {{session}};
+        let name = "{{ request.session.info.name }}";
+    </script>
+    <link rel="stylesheet" href="{% static 'css/progress.css' %}">
+    {#    <link rel="stylesheet" type='text/css' href="'http://fonts.googleapis.com/css?family=Ubuntu:500,500italic'">#}
+    {#    <link rel="stylesheet" href="{% static 'css/normalize.css' %}">#}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" media="screen" type="text/css"/>
+{% endblock %}
+
+{% block style %}
+    <style>
+        {#标题字体样式#}
+        .neonContainer {
+            display: flex;
+            justify-content: center;
+        }
+
+        {#按钮样式#}
+        .t_button {
+            position: fixed;
+            right: 20%;
+
+            /* 其他样式，例如背景色、内边距等 */
+        }
+
+        .s_button {
+        {#width: 90px;#}{#height: 300px;#} margin: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* 如果您想要按钮在垂直方向上居中对齐 */
+            text-align: center;
+        }
+
+        #ansButton1,#ansButton2,#ansButton3 {
+        {#position: absolute;#} background-color: #f0f0f6;
+            color: #050000;
+            border: none;
+            border-radius: 10px;
+            padding: 15px;
+            min-height: 30px;
+            min-width: 70px;
+            margin-bottom: 20px; /* 在按钮底部添加间距 */
+            font-family: Arial, sans-serif;
+            font-weight: bold; /* 设置文字为粗体 */
+            font-size: 2em;
+        }
+    
+        .selected {
+            outline-color: transparent;
+            outline-style: solid;
+            box-shadow: 0 0 0 4px #5a01a7;
+            transition: 0.7s;
+        }
+        
+        {#游戏主题容器#}
+        .game-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        {#视频播放组件#}
+        .video-player {
+            display: flex;
+            justify-content: center; /* 居中显示 */
+            width: 800px;
+            height: 500px;
+        }
+
+        .rightContainer {
+            display: flex;
+            justify-content: flex-start; /* Align items to the start of the container */
+            margin-left: 10%; /* Assuming the parent container's width is 100% */
+        {#display: grid;#} grid-template-columns: auto auto; /* 两列，自动宽度 */
+            gap: 20px; /* 设置合适的间距 */
+            align-items: center; /* 垂直居中对齐 */
+        }
+
+        {#积分器#}
+        .scoreContainer {
+            position: fixed;
+            left: 30%;
+            font-family: Arial, sans-serif;
+            font-weight: bold; /* 设置文字为粗体 */
+            font-size: 2em;
+        }
+
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="neonContainer">
+        {#        <span class="neon">找到匹配的图片</span>#}
+        <h1>请跟着视频练习发声</h1>
+    </div>
+
+    {#进度条#}
+    <div class="progress">
+        <div class="progress-shadow">
+            <div id="bar" class="progress-bar progress-bar-striped active" style="width: 0%;">
+                <div class="progress-value">0%</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="game-container">
+        <div class="video-player">
+            {% comment %} <video controls autoplay>
+                {#注意调整路径,text code #}
+                <source src="{% static 'img/speech/video/唇音bpmf/f.mp4' %}">
+            </video> {% endcomment %}
+            <video id="myVideo" controls autoplay>
+                <source src="" type="video/mp4">
+            </video>
+        </div>
+
+        <h1 id="message"></h1>
+        <div class="s_button">
+            <a id="ansButton1" class="selected" data-ans="skilled">熟练</a>
+            <a id="ansButton2"  data-ans="normal">一般</a>
+            <a id="ansButton3"  data-ans="hard">困难</a>
+        </div>
+    </div>
+
+    <div class="rightContainer">
+        <div class="scoreContainer">
+            <div>得分：
+                <span id="score">0</span>
+            </div>
+        </div>
+        <div class="t_button">
+            <a id="startListeningButton" class="btn" href="javascript:void(0)">暂停</a>
+            <a id="restartButton" href="select" class="btn btn-secondary">重新开始</a>
+            <a id="endButton" class="btn">结束</a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        const mergedData = {{ mergedData|safe }}
+        const level = {{ level }}
+        const exp_name = "speech_word"
+        const time = {{ time }}
+    </script>
+    <script type="module" src="{% static 'js/speech_word.js' %}"></script>
+{% endblock %}

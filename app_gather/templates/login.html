@@ -1,0 +1,127 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block style %}  
+    <style>  
+        .account {  
+            width: 450px;  
+            border: 1px solid #ddd;  
+            border-radius: 5px;  
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);  
+            margin: 100px auto;  
+            padding: 20px 40px;  
+            background-color: #fff;  
+        }  
+        
+        .logo-image {  
+        /* 这里是 Logo 图片的样式 */  
+            width: 420px; /* 设置 Logo 的宽度 */  
+            height: auto; /* 保持图片的原始比例 */  
+            margin-left: -25px;
+        }
+
+        .account h2 {  
+            text-align: center;  
+            color: #333;  
+            margin-top: 20px;  
+            margin-bottom: 20px;  
+        }  
+  
+        .account .form-group {  
+            margin-bottom: 20px;  
+        }  
+  
+        .account .form-group input[type="text"],  
+        .account .form-group input[type="password"] {  
+            width: 100%;  
+            padding: 10px;  
+            border: 1px solid #ccc;  
+            border-radius: 4px;  
+            box-sizing: border-box;  
+        }  
+  
+        .account .form-group span {  
+            display: block;  
+            color: red;  
+            font-size: 12px;  
+            margin-top: 5px;  
+        }  
+  
+        .account .form-group input[type="checkbox"] {  
+            margin-right: 5px;  
+        }  
+  
+        .account .form-group input[type="submit"] {  
+            width: 100%;  
+            padding: 12px;  
+            background-color: #4CAF50;  
+            color: white;  
+            border: none;  
+            border-radius: 4px;  
+            cursor: pointer;  
+        }  
+  
+        .account .form-group input[type="submit"]:hover {  
+            background-color: #45a049;  
+        }  
+        
+        .btn-primary {  
+        /* 这是特定于 .btn-primary 的样式 */  
+            font-weight: bold; /* 字体加粗 */  
+            font-size: 16px; /* 字体大小，可以根据需要调整 */  
+    }
+        
+    </style>  
+{% endblock %}  
+  
+{% block content %}  
+    <div class="account">  
+        <img src="{% static 'img/logo/logo.png' %}" alt="公司 Logo" class="logo-image">
+        <h2>患者登记</h2>  
+        <form method="post" novalidate>  
+            <!-- 添加语言选择框 -->  
+            <div class="form-group">  
+                <label for="id_language">选择语言:</label>  
+                <select id="id_language" name="language">  
+                    <option value="zh">中文</option>
+                    <option value="en">English</option>  
+                    <!-- 可以继续添加其他语言选项 -->  
+                </select>  
+            </div>  
+
+            {% csrf_token %}  
+            <div class="form-group">   
+                <input type="text" id="id_name" name="name" placeholder="患者名称" value="{{ form.name.value|default_if_none:'' }}">    
+                <span>{{ form.name.errors.0 }}</span> 
+            </div>  
+            <div class="form-group">  
+                <input type="password" id="id_password" name="password" placeholder="管理员密码"> 
+                <span>{{ form.password.errors.0 }}</span>  
+            </div>  
+
+            <div class="form-group">  
+                <input type="checkbox" id="id_agree" name="agree" checked>  
+                <label for="id_agree">已阅读并同意用户协议和隐私政策</label>  
+            </div>  
+            
+
+            <div class="form-group">  
+                <input type="submit" value="登 录" class="btn btn-primary">  
+            </div>  
+
+            <!-- 添加其他登录选项  
+            <div class="form-group">  
+                <a href="/forgot_password" class="btn btn-link">忘记密码？</a>  
+                <a href="/phone_login" class="btn btn-link">手机号登录</a>  
+                <a href="/other_login" class="btn btn-link">其他方式登录</a>  
+            </div>    -->
+            
+            <!-- 用户协议、隐私政策、帮助中心标签 -->  
+            <div class="form-group">  
+                <a href="/user_agreement" target="_blank">用户协议</a> |  
+                <a href="/privacy_policy" target="_blank">隐私政策</a> |  
+                <a href="/help_center" target="_blank">帮助中心</a>  
+            </div> 
+        </form>  
+    </div>  
+{% endblock %}

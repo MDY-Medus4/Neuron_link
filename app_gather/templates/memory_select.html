@@ -1,0 +1,159 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block link %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" media="screen" type="text/css"/>
+{% endblock %}
+
+{% block style %}
+    <style>
+        .game-container {
+            margin-bottom: 100px;
+        }
+
+        .game-info {
+            padding: 20px;
+        }
+
+        .game-image {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .parameter-adjustment {
+            padding: 20px;
+        }
+
+        .game-container_row {
+            width: 100%;
+        }
+
+        .col-md-5 {
+            width: 70%;
+        }
+
+        .col-md-6 {
+            width: 30%;
+        }
+
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <!-- 游戏1 -->
+        <div class="game-container_row">
+            <div class="col-md-5">
+                <div class="game-info">
+                    <h1>记忆卡片游戏</h1>
+                    <p style="font-size: 20px;color: #1b6d85">左边图片显示一定时间后会消失，需要您在右边回忆并选择刚才出现的图片</p>
+                </div>
+                <img src="{% static "img/img_memory/card_game.png" %}" alt="游戏1" class="game-image">
+            </div>
+
+            <div class="col-md-6">
+                <div class="parameter-adjustment">
+                    <h1>游戏参数设置</h1>
+                    <form>
+                        <div class="form-group">
+                            <label for="parameter1">session：</label>
+                            <input type="text" class="form-control" id="parameter1" placeholder="session" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="level">游戏难度：</label>
+                            <select class="form-control" id="level">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <!-- 其他选项 -->
+                            </select>
+                        </div>
+                        <!-- 其他参数 -->
+                        <a id="startButton_1" class="btn">进入游戏</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- 游戏2 -->
+        <div class="game-container_row">
+            <div class="col-md-5">
+                <div class="game-info">
+                    <h1>回忆路线</h1>
+                    <p style="font-size: 20px;color: #1b6d85">回忆之前的路线并行走</p>
+                </div>
+                <img src="{% static "img/img_memory/road_game.png" %}" alt="游戏2" class="game-image">
+            </div>
+
+            <div class="col-md-6">
+                <div class="parameter-adjustment">
+                    <br/><br/><br/><br/><br/><br/><br/>
+                    <h1>游戏参数设置</h1>
+                    <form>
+                        <div class="form-group">
+                            <label for="parameter3">session：</label>
+                            <input type="text" class="form-control" id="parameter3" placeholder="session" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="level2">游戏难度：</label>
+                            <select class="form-control" id="level2">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <!-- 其他选项 -->
+                            </select>
+                        </div>
+                        <!-- 其他参数 -->
+                        <a id="startButton_2" class="btn">进入游戏</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- 添加更多游戏块... -->
+    </div>
+{% endblock %}
+
+
+{% block js %}
+    <script>
+        document.getElementById('startButton_1').addEventListener('click', function () {
+            let sessionValue = document.getElementById('parameter1').value;
+            let levelValue = document.getElementById('level').value;
+
+            let numericValue = parseFloat(sessionValue);
+
+            // 检查是否为有效的数字且大于0
+            if (isNaN(numericValue) || numericValue <= 0) {
+                alert("session必须是大于0的有效数字！");
+                return false; // 阻止表单提交
+            }
+
+            // 构建URL，附带参数
+            let url = "/game/memory/memory_card?type=memory_card&session=" + sessionValue + "&level=" + levelValue;
+
+            // 跳转到新的URL
+            window.location.href = url;
+        });
+
+        document.getElementById('startButton_2').addEventListener('click', function () {
+            let sessionValue = document.getElementById('parameter3').value;
+            let levelValue = document.getElementById('level2').value;
+
+            let numericValue = parseFloat(sessionValue);
+
+            // 检查是否为有效的数字且大于0
+            if (isNaN(numericValue) || numericValue <= 0) {
+                alert("session必须是大于0的有效数字！");
+                return false; // 阻止表单提交
+            }
+
+            // 构建URL，附带参数
+            let url = "/game/memory/memory_road?type=memory_findroad&session=" + sessionValue + "&level=" + levelValue;
+
+            // 跳转到新的URL
+            window.location.href = url;
+        });
+    </script>
+{% endblock %}
+

@@ -1,0 +1,193 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block link %}
+    <script>
+        const exp = "motor_imagery_upper_limbs";
+        let session = {{session}};
+        let userName = "{{ request.session.info.name }}";
+        const srcOrContainer = 'src'
+        const voiceOption = 'ttsHint'
+        const motorArray = ['bend_arm', 'stretch_arm', 'fist','unfold']
+        const cueHint = ['弯曲胳膊演示', '伸展胳膊演示', '手部握拳演示', '手部展拳演示']
+        const motorHint = ['请想象弯曲胳膊', '请想象伸展胳膊', '请想象手部握拳', '请想象手部展拳']
+        const speakHint = ['请弯曲胳膊', '请伸展胳膊', '请握拳', '请张开手掌']
+        const basePath = '/static/img/motor_imagery/'
+        const cueContainer = [basePath + 'arm_up.gif', 
+                            basePath + 'arm_down.gif', 
+                            basePath + 'arm_close.gif', 
+                            basePath + 'arm_open.gif',
+                        ]
+    </script>
+    <link rel="stylesheet" href="{% static 'css/progress.css' %}">
+    {#    <link rel="stylesheet" type='text/css' href="'http://fonts.googleapis.com/css?family=Ubuntu:500,500italic'">#}
+    {#    <link rel="stylesheet" href="{% static 'css/normalize.css' %}">#}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" media="screen" type="text/css"/>
+{% endblock %}
+
+{% block style %}
+    <style>
+
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* 居中显示 */
+            align-items: center; /* 垂直居中显示 */
+            width: 100%;
+            height: 500px; 
+        }
+
+        #hand {
+            width: 450px;
+            height: 450px;
+        }
+
+        .queContainer {
+            /* 如果需要其他样式，可以在这里添加 */
+        }
+
+
+        {#标题字体样式#}
+        .neonContainer {
+            display: flex;
+            justify-content: center;
+        }
+
+        #cueContainer {
+            width: 40%;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #imageContainer {
+            width: 20%;
+            text-align: center;
+        }
+        .buttomBar {
+            width: 100%;
+            height: 100px;
+            position: fixed;
+            bottom: 0;
+            /* left: 50%;
+            transform: translateX(-50%); */
+            text-align: center;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        @-webkit-keyframes shining {
+            from {
+                text-shadow: 0 0 10px #9ddcef, 0 0 20px #8fd1e3, 0 0 30px #6ac1e7, 0 0 40px #43ace1, 0 0 50px skyblue, 0 0 60px skyblue;
+            }
+            to {
+                text-shadow: 0 0 5px lightblue, 0 0 10px lightblue, 0 0 15px lightblue, 0 0 20px skyblue, 0 0 25px skyblue, 0 0 30px skyblue;
+            }
+        }
+
+
+        {#反馈图片#}
+        #rImage, #lImage {
+            width: 100px; /* 根据需要调整宽度 */
+            height: 100px; /* 根据需要调整高度 */
+            object-fit: cover; /* 保持图片比例 */
+        }
+
+        {#反馈图片特效#}
+        .feedback_pic {
+            display: flex;
+            align-items: center;
+            margin-left: 100px;
+        }
+
+        .feedback_pic h1,
+        .feedback_pic .pic {
+            margin: 0; /* 去除标题和图片的默认边距 */
+        }
+
+        .pic {
+            display: flex;
+            border: 4px dashed #000000;
+            width: 250px; /* 设置容器宽度，根据需要调整 */
+            height: 250px; /* 设置容器高度，根据需要调整 */
+        }
+
+        /* 如果希望其中的图片也按照容器大小显示，可以设置图片的最大宽度和最大高度 */
+        #rImage,
+        #lImage {
+            width: 230px; /* 设置图片宽度，根据需要调整 */
+            height: 230px; /* 设置图片高度，根据需要调整 */
+        }
+
+
+        {#按钮样式#}
+        .t_button {
+            margin-right: 20px;
+            display: flex;
+            /* 其他样式，例如背景色、内边距等 */
+        }
+
+        #cueContainerImg {
+            width: 360px;
+            height: 450px;   
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            visibility: hidden;
+        }
+
+    </style>
+{% endblock %}
+
+
+
+{% block content %}
+    <div class="neonContainer">
+        {#        <span class="neon">找到匹配的图片</span>#}
+        <h1>根据屏幕提示的图片进行上肢的运动，手的抓握以及胳膊的屈伸</h1>
+    </div>
+
+    {#进度条#}
+    {#    // 外边框#}
+    <div class="progress">
+        {#    // 内边框#}
+        <div class="progress-shadow">
+            <div id="bar" class="progress-bar progress-bar-striped active" style="width: 0%;">
+                <div class="progress-value">0%</div>
+            </div>
+        </div>
+    </div>
+
+
+    
+    <div class="game-container">
+        <div id="imageContainer">{# 建立容器，内部代码由js渲染 #}
+            <h2 id="hintText">按下空格键开始实验</h2>
+        </div>
+        <div id="cueContainer">{# 建立容器，内部代码由js渲染 #}
+            <img src="/static/img/motor_imagery/motor_left.gif" id="cueContainerImg" alt="示例">
+        </div>
+    </div>
+
+    <div class="buttomBar">
+        <div class="t_button">
+            <a id="startvr" class="btn">启动VR</a>
+            <a id="startListeningButton" class="btn" style="display: none;">暂停</a>
+            <a id="restartButton" href="/game/motor_imagery/setting" class="btn btn-secondary" style="display: none;">重新开始</a>
+            <a id="endButton" class="btn" style="display: none;">结束</a>
+        </div>
+    </div>
+
+    <global-popup id="popup"></global-popup>
+{% endblock %}
+
+
+{% block js %}
+    <!-- <script>
+        const exp_name = "spatial_rotate_hands"
+    </script> -->
+    <script type="module" src="{% static '/js/motor_imagery.js' %}"></script>
+    <script type="module" src="{% static '/component/globalPopup.js' %}"></script>
+{% endblock %}
