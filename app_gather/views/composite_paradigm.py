@@ -47,6 +47,27 @@ def game(request):
     level = request.GET.get('level')
     time = request.GET.get('time')
 
+    game_type_1 = 'composite_paradigm'
+    xlsx_file_path = f'app_gather/static/excel/{game_type_1}.xlsx'
+    imagery_data = read_xlsx(xlsx_file_path, game_type_1)
+
+
+    all_data = {
+        'speech_imagery': imagery_data,
+    }
+    return render(request, 'composite_paradigm.html', {
+        'session': session,
+        'level': level,
+        'time': time,
+        'alldata': all_data
+    })
+
+#def game(request):
+    """言语想象 - 通过图片进行想象"""
+    session = request.GET.get('session')
+    level = request.GET.get('level')
+    time = request.GET.get('time')
+
     game_type_1 = 'speech_imagery'
     xlsx_file_path = f'app_gather/static/excel/{game_type_1}.xlsx'
     imagery_data = read_xlsx(xlsx_file_path, game_type_1)
