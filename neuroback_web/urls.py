@@ -60,6 +60,7 @@ urlpatterns = [
     path("game/motor_imagery/game",motorImagery.game),
 
     path("game/composite_paradigm/setting",composite_paradigm.setting),
+    path("game/composite_paradigm/game",composite_paradigm.game),
 
 
 
