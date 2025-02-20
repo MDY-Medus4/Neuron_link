@@ -102,8 +102,12 @@
             }
 
             // 进入言语想象游戏
-            let speechImageryUrl = "/game/speech/imagery?session=" + sessionValue + "&level=" + levelValue + "&time=" + timeValue;
-            window.location.href = speechImageryUrl;
+            let compositeParadigmUrl 
+            = "/game/composite_paradigm/game?" 
+            + "session=" + sessionValue 
+            + "&level=" + levelValue 
+            + "&time=" + timeValue;
+            window.location.href = compositeParadigmUrl;
 
             // 设置定时器，等待言语想象游戏完成后自动进入公开言语
             setTimeout(function () {
