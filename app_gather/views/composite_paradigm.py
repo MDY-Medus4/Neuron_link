@@ -41,7 +41,7 @@ def setting(request):
     return render(request, 'composite_setting.html')
 
 
-def composite_paradigm(request):
+def game(request):
     """言语想象 - 通过图片进行想象"""
     session = request.GET.get('session')
     level = request.GET.get('level')
