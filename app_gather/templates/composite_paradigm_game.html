@@ -1,0 +1,84 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block link %}
+    <script>
+        const exp = "speech_vowel_voice";
+        let session = {{session}};
+        let name = "{{ request.session.info.name }}";
+    </script>
+    <link rel="stylesheet" href="{% static 'css/progress.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" media="screen" type="text/css"/>
+{% endblock %}
+
+{% block style %}
+    <style>
+        .game-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 60px;
+        }
+
+        #imageContainer {
+            border: 4px solid #397003;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        #mainImage {
+            width: 400px;
+            height: 400px;
+            object-fit: cover;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="neonContainer">
+        <h1>想象对应的单词</h1>
+    </div>
+
+    <div class="progress">
+        <div class="progress-shadow">
+            <div id="bar" class="progress-bar progress-bar-striped active" style="width: 0%;">
+                <div class="progress-value">0%</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="game-container">
+        <div id="imageContainer">
+            <img id="mainImage" src="{% static 'img/sample_image.png' %}" alt="请想象该图片的单词">
+        </div>
+    </div>
+
+    <div class="rightContainer">
+        <div class="feedback_pic">
+            <h1>回答结果：</h1>
+            <div class="pic">
+                <img id="rImage" src="{% static 'img/hint/right.png' %}" alt="太棒了，回答正确" style="display: none;">
+            </div>
+        </div>
+        <div class="scoreContainer">
+            <div>得分：
+                <span id="score">0</span>
+            </div>
+        </div>
+        <div class="t_button">
+            <a id="startListeningButton" class="btn" href="javascript:void(0)">暂停</a>
+            <a id="restartButton" href="/game/speech/select" class="btn btn-secondary">重新开始</a>
+            <a id="endButton" class="btn">结束</a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        const exp_name = "speech_picture";
+    </script>
+    <script type="module" src="{% static '/js/speech_picture.js' %}"></script>
+{% endblock %}

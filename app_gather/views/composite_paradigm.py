@@ -41,7 +41,7 @@ def setting(request):
     return render(request, 'composite_setting.html')
 
 
-def composite_paradigm(request):
+def game(request):
     """言语想象 - 通过图片进行想象"""
     session = request.GET.get('session')
     level = request.GET.get('level')
@@ -60,7 +60,7 @@ def composite_paradigm(request):
         'speech_imagery': imagery_data,
         'speech_public': public_data
     }
-    return render(request, 'composite_paradigm.html', {
+    return render(request, 'composite_paradigm_game.html', {
         'session': session,
         'level': level,
         'time': time,
