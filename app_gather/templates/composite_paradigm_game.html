@@ -34,6 +34,26 @@
             height: 400px;
             object-fit: cover;
         }
+
+        .image-player {
+        /* 容器内图片居中 */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        /* 容器的高度根据内容自适应 */
+        height: auto; 
+        /* 控制容器的最大高度 */
+        max-height: 500px; 
+        width: 100%;
+        padding: 20px;
+        }
+
+        #myImage {
+        height: 300px; /* 设置固定高度 */
+        width: auto; /* 宽度自适应，保持图片比例 */
+        object-fit: contain; /* 保持图片比例并填充容器 */
+        }
+
     </style>
 {% endblock %}
 
@@ -51,16 +71,18 @@
     </div>
 
     <div class="game-container">
-        <div id="imageContainer">
-            <img id="mainImage" src="{% static 'img/sample_image.png' %}" alt="请想象该图片的单词">
+        <div class="image-player">
+            {% comment %} <img src="{% static 'img/composite_paradigm/example.jpg' %}" alt="示例图片"> {% endcomment %}
+            <img id="myImage" src="" alt="待加载图片">
         </div>
     </div>
 
+    
     <div class="rightContainer">
         <div class="feedback_pic">
             <h1>回答结果：</h1>
             <div class="pic">
-                <img id="rImage" src="{% static 'img/hint/right.png' %}" alt="太棒了，回答正确" style="display: none;">
+                <img id="rImage" src="{% static 'img/hint/right.png' %}" alt="完成" style="display: none;">
             </div>
         </div>
         <div class="scoreContainer">
@@ -69,16 +91,35 @@
             </div>
         </div>
         <div class="t_button">
+            <a id="switchButton" class="btn btn-secondary">下一步</a>
             <a id="startListeningButton" class="btn" href="javascript:void(0)">暂停</a>
-            <a id="restartButton" href="/game/speech/select" class="btn btn-secondary">重新开始</a>
+            <a id="restartButton" href="/game/composite_paradigm/setting" class="btn btn-secondary">重新开始</a>
             <a id="endButton" class="btn">结束</a>
         </div>
     </div>
 {% endblock %}
 
 {% block js %}
-    <script>
-        const exp_name = "speech_picture";
-    </script>
-    <script type="module" src="{% static '/js/speech_picture.js' %}"></script>
+<script>
+    const exp_name = "speech_picture";
+
+    // 图片数组，存储图片的路径
+    const images = [
+        "{% static 'img/composite_paradigm/eat.jpg' %}",
+        "{% static 'img/composite_paradigm/help.jpg' %}",
+        "{% static 'img/composite_paradigm/toilet.jpg' %}"
+    ];
+    let currentIndex = 0; // 当前图片的索引
+    const myImage = document.getElementById('myImage'); // 获取图片元素
+    const switchButton = document.getElementById('switchButton'); // 获取切换按钮元素
+
+    // 初始化时显示第一张图片
+    myImage.src = images[currentIndex];
+
+    // 为切换按钮添加点击事件监听器
+    switchButton.addEventListener('click', function() {
+        currentIndex = (currentIndex + 1) % images.length; // 计算下一张图片的索引
+        myImage.src = images[currentIndex]; // 更新图片的 src 属性
+    });
+</script>
 {% endblock %}
