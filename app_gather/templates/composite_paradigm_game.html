@@ -3,9 +3,11 @@
 
 {% block link %}
     <script>
-        const exp = "speech_vowel_voice";
-        //let session = {{ session }};
+        const exp = "composite_paradigm";
         let name = "{{ request.session.info.name }}";
+        const session = parseInt("{{ session }}");
+        const level = "{{ level }}";
+        const allData = JSON.parse('{{ alldata|escapejs }}');
     </script>
     <link rel="stylesheet" href="{% static 'css/progress.css' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}" media="screen" type="text/css"/>
@@ -20,46 +22,66 @@
             margin-bottom: 60px;
         }
 
-        #imageContainer {
-            border: 4px solid #397003;
-            border-radius: 8px;
+        .image-player {
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
+            height: auto;
+            max-height: 500px;
+            width: 100%;
             padding: 20px;
         }
 
-        #mainImage {
-            width: 400px;
-            height: 400px;
-            object-fit: cover;
-        }
-
-        .image-player {
-        /* 容器内图片居中 */
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        /* 容器的高度根据内容自适应 */
-        height: auto; 
-        /* 控制容器的最大高度 */
-        max-height: 500px; 
-        width: 100%;
-        padding: 20px;
-        }
-
         #myImage {
-        height: 300px; /* 设置固定高度 */
-        width: auto; /* 宽度自适应，保持图片比例 */
-        object-fit: contain; /* 保持图片比例并填充容器 */
+            height: 300px;
+            width: auto;
+            object-fit: contain;
         }
 
+        .phase-indicator {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #1b6d85;
+        }
+
+        .chinese-word {
+            text-align: center;
+            font-size: 32px;
+            margin: 20px 0;
+            color: #1b6d85;
+        }
+
+        .trial-counter {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            font-size: 24px;
+            color: #1b6d85;
+        }
+
+        .key-hint {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            font-size: 16px;
+        }
     </style>
 {% endblock %}
 
 {% block content %}
+    <div class="trial-counter">第 <span id="currentTrial">1</span>/<span id="totalTrials">{{ session }}</span> 轮</div>
+
+    <div class="phase-indicator">
+        <h2 id="phaseTitle">言语想象阶段</h2>
+    </div>
+
     <div class="neonContainer">
-        <h1>想象对应的单词</h1>
+        <h1 id="instruction">想象对应的单词发音</h1>
+    </div>
+
+    <div class="chinese-word">
+        <span id="chineseWord"></span>
     </div>
 
     <div class="progress">
@@ -72,12 +94,14 @@
 
     <div class="game-container">
         <div class="image-player">
-            {% comment %} <img src="{% static 'img/composite_paradigm/example.jpg' %}" alt="示例图片"> {% endcomment %}
             <img id="myImage" src="" alt="待加载图片">
         </div>
     </div>
 
-    
+    <div class="key-hint">
+        按空格键切换到下一阶段，按 ESC 键暂停/继续
+    </div>
+
     <div class="rightContainer">
         <div class="feedback_pic">
             <h1>回答结果：</h1>
@@ -91,9 +115,7 @@
             </div>
         </div>
         <div class="t_button">
-            <a id="switchButton" class="btn btn-secondary">下一步</a>
-            <a id="startListeningButton" class="btn" href="javascript:void(0)">暂停</a>
-            <a id="restartButton" href="/game/composite_paradigm/setting" class="btn btn-secondary">重新开始</a>
+            <a id="restartButton" href="/game/composite_paradigm/setting" class="btn btn-secondary" style="display: none;">重新开始</a>
             <a id="endButton" class="btn">结束</a>
         </div>
     </div>
@@ -101,25 +123,157 @@
 
 {% block js %}
 <script>
-    const exp_name = "speech_picture";
+    const exp_name = "composite_paradigm";
+    let currentPhase = 'imagery'; // 当前阶段：imagery 或 public
+    let phaseComplete = false; // 当前阶段是否完成
+    let currentTrial = 1; // 当前轮数
+    let totalTrials = session; // 总轮数
+    let mark_save = []; // 记录数据
+    let is_Listening = true; // 是否接受键盘输入
 
-    // 图片数组，存储图片的路径
+    // 图片数组
     const images = [
         "{% static 'img/composite_paradigm/eat.jpg' %}",
         "{% static 'img/composite_paradigm/help.jpg' %}",
         "{% static 'img/composite_paradigm/toilet.jpg' %}"
     ];
-    let currentIndex = 0; // 当前图片的索引
-    const myImage = document.getElementById('myImage'); // 获取图片元素
-    const switchButton = document.getElementById('switchButton'); // 获取切换按钮元素
 
-    // 初始化时显示第一张图片
+    const chineseWords = ['吃饭', '帮助', '厕所'];
+    let currentIndex = 0;
+
+    const myImage = document.getElementById('myImage');
+    const phaseTitle = document.getElementById('phaseTitle');
+    const instruction = document.getElementById('instruction');
+    const chineseWord = document.getElementById('chineseWord');
+    const endButton = document.getElementById('endButton');
+
+    // 初始化显示
     myImage.src = images[currentIndex];
+    chineseWord.textContent = chineseWords[currentIndex];
+    document.getElementById('currentTrial').textContent = currentTrial;
 
-    // 为切换按钮添加点击事件监听器
-    switchButton.addEventListener('click', function() {
-        currentIndex = (currentIndex + 1) % images.length; // 计算下一张图片的索引
-        myImage.src = images[currentIndex]; // 更新图片的 src 属性
+    // 更新进度条
+    function updateProgress() {
+        const totalSteps = images.length * 2; // 每张图片两个阶段
+        const currentStep = currentIndex * 2 + (currentPhase === 'public' ? 1 : 0);
+        const progress = (currentStep / totalSteps) * 100;
+        
+        document.querySelector('.progress-bar').style.width = progress + "%";
+        document.querySelector('.progress-value').textContent = Math.round(progress) + "%";
+    }
+
+    // 切换到下一个阶段或图片
+    function nextPhase() {
+        if (!is_Listening) return; // 如果暂停状态，不进行切换
+
+        if (currentPhase === 'imagery') {
+            // 从言语想象切换到公开言语
+            currentPhase = 'public';
+            phaseTitle.textContent = '公开言语阶段';
+            instruction.textContent = '说出对应的单词';
+        } else {
+            // 从公开言语切换到下一张图片的言语想象
+            currentPhase = 'imagery';
+            phaseTitle.textContent = '言语想象阶段';
+            instruction.textContent = '想象对应的单词发音';
+            currentIndex++;
+
+            if (currentIndex >= images.length) {
+                currentIndex = 0;
+                currentTrial++;
+                document.getElementById('currentTrial').textContent = currentTrial;
+
+                if (currentTrial > totalTrials) {
+                    endExperiment();
+                    return;
+                }
+            }
+        }
+
+        myImage.src = images[currentIndex];
+        chineseWord.textContent = chineseWords[currentIndex];
+        updateProgress();
+
+        // 记录实验数据
+        const timestamp = new Date().getTime();
+        mark_save.push({
+            trial: currentTrial,
+            phase: currentPhase,
+            image: images[currentIndex],
+            word: chineseWords[currentIndex],
+            timestamp: timestamp
+        });
+    }
+
+    // 实验结束处理
+    function endExperiment() {
+        phaseComplete = true;
+        document.getElementById('restartButton').style.display = 'inline-block';
+        alert('实验已完成！');
+    }
+
+    // 切换暂停/继续状态
+    function toggleListening() {
+        is_Listening = !is_Listening;
+        document.querySelector('.key-hint').style.color = is_Listening ? '#666' : '#ff0000';
+    }
+
+    // 监听键盘事件
+    document.addEventListener('keydown', (event) => {
+        if (phaseComplete) return; // 如果实验已完成，不响应键盘
+
+        switch (event.code) {
+            case 'Space': // 空格键：切换到下一阶段
+                event.preventDefault(); // 防止页面滚动
+                if (is_Listening) {
+                    nextPhase();
+                }
+                break;
+            case 'Escape': // ESC键：暂停/继续
+                toggleListening();
+                break;
+        }
     });
+
+    // 结束按钮事件处理
+    endButton.addEventListener('click', function() {
+        fetch('/game/composite_paradigm/save_data', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                "mark_save": mark_save,
+                "name": name,
+                "exp_name": exp_name,
+                "session": session + '_L' + level
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('数据保存成功:', data);
+            window.location.href = '/game/speech/select';
+        })
+        .catch(error => {
+            console.error('保存数据出错:', error);
+        });
+    });
+
+    // 获取CSRF Token的函数
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
 </script>
 {% endblock %}

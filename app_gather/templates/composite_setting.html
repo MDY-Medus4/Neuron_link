@@ -42,7 +42,7 @@
         <div class="game-container">
             <div class="col-md-6">
                 <div class="game-info">
-                    <h1>言语认知任务</h1>
+                    <h1>复合言语任务</h1>
                     <p style="font-size: 20px;color: #1b6d85">按照屏幕里的图片，先想象词语的发音，再读出词语</p>
                 </div>
                 <img src="{% static 'img/speech/logo/game.png' %}" alt="游戏" class="game-image">
@@ -53,8 +53,8 @@
                     <h1>游戏参数设置</h1>
                     <form>
                         <div class="form-group">
-                            <label for="session">Session：</label>
-                            <input type="text" class="form-control" id="session" placeholder="session" required>
+                            <label for="session">实验轮数：</label>
+                            <input type="text" class="form-control" id="session" placeholder="请输入实验轮数" required>
                         </div>
                         <div class="form-group">
                             <label for="level">游戏难度：</label>
@@ -65,8 +65,8 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="time">每张图片的时间(秒)：</label>
-                            <input type="text" class="form-control" id="time" placeholder="时间" required>
+                            <label for="time">每个阶段的时间(秒)：</label>
+                            <input type="text" class="form-control" id="time" placeholder="每个阶段显示时间" required>
                         </div>
                         <a id="startButton" class="btn">进入游戏</a>
                     </form>
@@ -86,9 +86,9 @@
             let numericSession = parseFloat(sessionValue);
             let numericTime = parseFloat(timeValue);
 
-            // 校验Session输入
-            if (isNaN(numericSession) || numericSession <= 0) {
-                alert("Session必须是大于0的有效数字！");
+            // 校验轮数输入
+            if (isNaN(numericSession) || numericSession <= 0 || !Number.isInteger(numericSession)) {
+                alert("实验轮数必须是大于0的整数！");
                 return false;
             }
 
@@ -101,19 +101,12 @@
                 if (!result) return false;
             }
 
-            // 进入言语想象游戏
-            let compositeParadigmUrl 
-            = "/game/composite_paradigm/game?" 
-            + "session=" + sessionValue 
-            + "&level=" + levelValue 
-            + "&time=" + timeValue;
+            // 进入复合言语游戏
+            let compositeParadigmUrl = "/game/composite_paradigm/game?" 
+                + "session=" + sessionValue 
+                + "&level=" + levelValue 
+                + "&time=" + timeValue;
             window.location.href = compositeParadigmUrl;
-
-            // 设置定时器，等待言语想象游戏完成后自动进入公开言语
-            setTimeout(function () {
-                let speechPublicUrl = "/game/speech/public?session=" + sessionValue + "&level=" + levelValue;
-                window.location.href = speechPublicUrl;
-            }, numericTime * 1000 * 10); // 假设游戏1运行时间是 time × 10 秒
         });
     </script>
 {% endblock %}
